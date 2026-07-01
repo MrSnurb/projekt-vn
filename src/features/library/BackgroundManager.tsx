@@ -25,6 +25,13 @@ export function BackgroundManager() {
               onChange={(e) => updateBackground(bg.id, { name: e.target.value })}
               placeholder="Name des Hintergrunds"
             />
+            <textarea
+              value={bg.description ?? ''}
+              onChange={(e) => updateBackground(bg.id, { description: e.target.value })}
+              placeholder="Beschreibung dieser Location (nur für dich)…"
+              rows={2}
+              className="w-full resize-none rounded border border-slate-200 px-2 py-1 text-xs focus:border-indigo-500 focus:outline-none"
+            />
             <Button variant="danger" className="w-full" onClick={() => removeBackground(bg.id)}>
               Entfernen
             </Button>

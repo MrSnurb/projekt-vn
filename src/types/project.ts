@@ -4,12 +4,16 @@ export interface Character {
   color: string
   /** expressionKey (e.g. "neutral", "happy") -> image data URL */
   sprites: Record<string, string>
+  /** author-only note, never shown in the exported game; included in the PDF manuscript export */
+  description?: string
 }
 
 export interface Background {
   id: string
   name: string
   imageDataUrl: string
+  /** author-only note, never shown in the exported game; included in the PDF manuscript export */
+  description?: string
 }
 
 export interface CharacterOnStage {

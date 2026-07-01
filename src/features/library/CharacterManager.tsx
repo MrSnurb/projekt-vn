@@ -43,6 +43,16 @@ function CharacterCard({ character }: { character: Character }) {
           </Button>
         </div>
         <div>
+          <p className="mb-1 text-xs font-medium text-slate-500">Charakterisierung (nur für dich, nicht im Spiel sichtbar)</p>
+          <textarea
+            value={character.description ?? ''}
+            onChange={(e) => updateCharacter(character.id, { description: e.target.value })}
+            placeholder="z.B. Hintergrund, Motivation, Sprechweise…"
+            rows={2}
+            className="w-full resize-none rounded border border-slate-200 px-2 py-1 text-sm focus:border-indigo-500 focus:outline-none"
+          />
+        </div>
+        <div>
           <p className="mb-1.5 text-xs font-medium text-slate-500">Ausdrücke / Sprites</p>
           <div className="flex flex-wrap gap-3">
             {expressions.map(([expr, dataUrl]) => (

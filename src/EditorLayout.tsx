@@ -10,6 +10,7 @@ import { PlaytestOverlay } from './features/playtest/PlaytestOverlay'
 import { Button } from './components/Button'
 import { exportProjectAsHtml } from './export/html/exportHtml'
 import { exportProjectAsPptx } from './export/pptx/exportPptx'
+import { exportProjectAsScriptPdf } from './export/pdf/exportPdf'
 import { useProjectPersistence } from './features/persistence/useProjectPersistence'
 import type { EditorTab } from './state/editorUiStore'
 
@@ -85,6 +86,14 @@ export function EditorLayout() {
             title="Lineares Storyboard – Verzweigungen sind hier nicht interaktiv, nur als Text sichtbar"
           >
             ⭳ Als PPTX (Storyboard)
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => exportProjectAsScriptPdf(project)}
+            disabled={project.slides.length === 0}
+            title="Figuren, Locations und der gesamte Dialogtext als druckbares Manuskript"
+          >
+            ⭳ Als PDF (Manuskript)
           </Button>
           <Button variant="primary" onClick={openPlaytest} disabled={project.slides.length === 0}>
             ▶ Playtest
