@@ -1,0 +1,65 @@
+import { useProjectStore } from '../../state/projectStore'
+import { Button } from '../../components/Button'
+import { NARRATOR_LABEL } from '../../types/project'
+import type { Slide } from '../../types/project'
+
+export function DialogueEditor({ slide }: { slide: Slide }) {
+  const characters = useProjectStore((s) => s.project.characters)
+  const addDialogueLine = useProjectStore((s) => s.addDialogueLine)
+  const updateDialogueLine = useProjectStore((s) => s.updateDialogueLine)
+  const removeDialogueLine = useProjectStore((s) => s.removeDialogueLine)
+  const moveDialogueLine = useProjectStore((s) => s.moveDialogueLine)
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Dialog</h3>
+        <Button onClick={() => addDialogueLine(slide.id)}>+ Zeile</Button>
+      </div>
+      <div className="space-y-2">
+        {slide.dialogueLines.map((line, i) => (
+          <div key={i} className="space-y-1 rounded-md border border-slate-200 p-2">
+            <div className="flex items-center gap-1">
+              <select
+                value={line.speakerCharacterId ?? ''}
+                onChange={(e) => updateDialogueLine(slide.id, i, { speakerCharacterId: e.target.value || null })}
+                className="flex-1 rounded border border-slate-200 bg-white px-1.5 py-1 text-xs"
+              >
+                <option value="">{NARRATOR_LABEL}</option>
+                {characters.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              <button onClick={() => moveDialogueLine(slide.id, i, -1)} disabled={i === 0} className="px-1 text-xs text-slate-400 hover:text-slate-700 disabled:opacity-30">
+                ↑
+              </button>
+              <button
+                onClick={() => moveDialogueLine(slide.id, i, 1)}
+                disabled={i === slide.dialogueLines.length - 1}
+                className="px-1 text-xs text-slate-400 hover:text-slate-700 disabled:opacity-30"
+              >
+                ↓
+              </button>
+              <button
+                onClick={() => removeDialogueLine(slide.id, i)}
+                disabled={slide.dialogueLines.length === 1}
+                className="px-1 text-xs text-red-400 hover:text-red-600 disabled:opacity-30"
+              >
+                ✕
+              </button>
+            </div>
+            <textarea
+              value={line.text}
+              onChange={(e) => updateDialogueLine(slide.id, i, { text: e.target.value })}
+              placeholder="Was wird gesagt?"
+              rows={2}
+              className="w-full resize-none rounded border border-slate-200 px-2 py-1 text-sm focus:border-indigo-500 focus:outline-none"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}

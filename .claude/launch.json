@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "vn-dev",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "C:\\Users\\User\\Desktop\\Projekt VN\\.claude\\dev.cmd"],
+      "port": 5173
+    }
+  ]
+}
