@@ -30,6 +30,7 @@ interface ProjectStoreState {
   removeCharacter: (id: string) => void
   setCharacterSprite: (id: string, expression: string, imageDataUrl: string) => void
   removeCharacterSprite: (id: string, expression: string) => void
+  renameCharacterSprite: (id: string, oldExpression: string, newExpression: string) => void
 
   // backgrounds
   addBackground: (input: { name: string; imageDataUrl: string }) => string
@@ -126,6 +127,34 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
       },
       isDirty: true,
     })),
+  renameCharacterSprite: (id, oldExpression, newExpression) =>
+    set((state) => {
+      const trimmed = newExpression.trim()
+      const character = state.project.characters.find((c) => c.id === id)
+      if (!character || !trimmed || trimmed === oldExpression || trimmed in character.sprites) {
+        return state
+      }
+      return {
+        project: {
+          ...state.project,
+          characters: state.project.characters.map((c) => {
+            if (c.id !== id) return c
+            const sprites: Record<string, string> = {}
+            for (const [key, value] of Object.entries(c.sprites)) {
+              sprites[key === oldExpression ? trimmed : key] = value
+            }
+            return { ...c, sprites }
+          }),
+          slides: state.project.slides.map((s) => ({
+            ...s,
+            charactersOnStage: s.charactersOnStage.map((cos) =>
+              cos.characterId === id && cos.expression === oldExpression ? { ...cos, expression: trimmed } : cos,
+            ),
+          })),
+        },
+        isDirty: true,
+      }
+    }),
 
   addBackground: ({ name, imageDataUrl }) => {
     const id = createId()

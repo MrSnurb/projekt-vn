@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useProjectStore } from '../../state/projectStore'
 import { Button } from '../../components/Button'
 import { TextInput } from '../../components/TextInput'
@@ -17,9 +16,10 @@ function CharacterCard({ character }: { character: Character }) {
   const removeCharacter = useProjectStore((s) => s.removeCharacter)
   const setCharacterSprite = useProjectStore((s) => s.setCharacterSprite)
   const removeCharacterSprite = useProjectStore((s) => s.removeCharacterSprite)
-  const [newExpressionName, setNewExpressionName] = useState('')
+  const renameCharacterSprite = useProjectStore((s) => s.renameCharacterSprite)
 
   const expressions = Object.entries(character.sprites)
+  const nextAutoExpressionName = expressions.length === 0 ? DEFAULT_EXPRESSION : `ausdruck-${expressions.length + 1}`
 
   return (
     <div className="flex gap-4 rounded-lg border border-slate-200 bg-white p-4">
@@ -53,8 +53,24 @@ function CharacterCard({ character }: { character: Character }) {
                   className="h-20 w-20"
                   label={expr}
                 />
-                <div className="flex items-center gap-1 text-xs text-slate-500">
-                  <span>{expr}</span>
+                <div className="flex items-center gap-1">
+                  <input
+                    key={expr}
+                    defaultValue={expr}
+                    onBlur={(e) => {
+                      if (e.target.value === expr) return
+                      renameCharacterSprite(character.id, expr, e.target.value)
+                      const stillOld = useProjectStore
+                        .getState()
+                        .project.characters.find((c) => c.id === character.id)?.sprites[expr]
+                      if (stillOld !== undefined) {
+                        // rename was rejected (empty name or duplicate) - revert the stray typed text
+                        e.target.value = expr
+                      }
+                    }}
+                    className="w-16 rounded border border-slate-200 px-1 py-0.5 text-center text-xs"
+                    title="Name des Ausdrucks (zum Umbenennen klicken)"
+                  />
                   <button
                     onClick={() => removeCharacterSprite(character.id, expr)}
                     className="text-slate-400 hover:text-red-500"
@@ -68,20 +84,11 @@ function CharacterCard({ character }: { character: Character }) {
             <div className="flex flex-col items-center gap-1">
               <ImageDropzone
                 value={null}
-                onChange={(url) => {
-                  const expr = newExpressionName.trim() || (expressions.length === 0 ? DEFAULT_EXPRESSION : `ausdruck-${expressions.length + 1}`)
-                  setCharacterSprite(character.id, expr, url)
-                  setNewExpressionName('')
-                }}
+                onChange={(url) => setCharacterSprite(character.id, nextAutoExpressionName, url)}
                 className="h-20 w-20"
                 label="+ Ausdruck"
               />
-              <input
-                value={newExpressionName}
-                onChange={(e) => setNewExpressionName(e.target.value)}
-                placeholder={expressions.length === 0 ? DEFAULT_EXPRESSION : 'Name'}
-                className="w-20 rounded border border-slate-200 px-1 py-0.5 text-center text-xs"
-              />
+              <span className="text-xs text-slate-400">{nextAutoExpressionName}</span>
             </div>
           </div>
         </div>
