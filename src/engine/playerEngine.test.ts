@@ -2,13 +2,19 @@ import { describe, it, expect } from 'vitest'
 import { getInitialState, reduce, getAvailableChoices, getCurrentLine } from './playerEngine'
 import type { Project } from '../types/project'
 
-function slide(id: string, lines: string[], choices?: { text: string; targetSlideId: string }[]) {
+function slide(
+  id: string,
+  lines: string[],
+  choices?: { text: string; targetSlideId: string }[],
+  isEnding?: boolean,
+) {
   return {
     id,
     backgroundId: null,
     charactersOnStage: [],
     dialogueLines: lines.map((text) => ({ speakerCharacterId: null, text })),
     ...(choices ? { choices } : {}),
+    ...(isEnding ? { isEnding } : {}),
   }
 }
 
@@ -179,5 +185,34 @@ describe('playerEngine', () => {
     state = reduce(project, state, { type: 'ADVANCE_LINE' })
     state = reduce(project, state, { type: 'RESTART' })
     expect(state).toEqual(getInitialState(project))
+  })
+
+  it('stops at a slide explicitly marked as an ending, even if later slides exist', () => {
+    const project: Project = {
+      characters: [],
+      backgrounds: [],
+      slides: [slide('a', ['this is a bad ending'], undefined, true), slide('b', ['unrelated later slide'])],
+    }
+    let state = getInitialState(project)
+    state = reduce(project, state, { type: 'ADVANCE_LINE' })
+    expect(state.isEnded).toBe(true)
+    expect(state.currentSlideId).toBe('a')
+  })
+
+  it('ignores isEnding on a slide that still has active choices', () => {
+    const project: Project = {
+      characters: [],
+      backgrounds: [],
+      slides: [
+        slide('a', ['pick'], [{ text: 'go', targetSlideId: 'b' }], true),
+        slide('b', ['reached via choice']),
+      ],
+    }
+    let state = getInitialState(project)
+    state = reduce(project, state, { type: 'ADVANCE_LINE' })
+    expect(getAvailableChoices(project, state)).toHaveLength(1)
+    state = reduce(project, state, { type: 'CHOOSE', choiceIndex: 0 })
+    expect(state.currentSlideId).toBe('b')
+    expect(state.isEnded).toBe(false)
   })
 })

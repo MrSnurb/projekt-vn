@@ -17,6 +17,10 @@ export function walkDefaultPath(project: Project): string[] {
     path.push(current.id)
     visited.add(current.id)
 
+    if (current.isEnding && !(current.choices && current.choices.length > 0)) {
+      break
+    }
+
     if (current.choices && current.choices.length > 0) {
       const targetId: string | undefined = current.choices[0]?.targetSlideId
       current = project.slides.find((s) => s.id === targetId)

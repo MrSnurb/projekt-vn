@@ -11,6 +11,12 @@ export function validateProject(project: Project): StoryIssue[] {
   const slideIds = new Set(project.slides.map((s) => s.id))
 
   for (const slide of project.slides) {
+    if (slide.isEnding && slide.choices && slide.choices.length > 0) {
+      issues.push({
+        slideId: slide.id,
+        message: 'Folie ist als Ende markiert, hat aber aktive Antworten – die Antworten haben Vorrang, das Ende wird ignoriert.',
+      })
+    }
     if (slide.choices) {
       if (slide.choices.length === 0) {
         issues.push({ slideId: slide.id, message: 'Folie hat einen Antwort-Bereich ohne Antworten.' })
@@ -40,7 +46,7 @@ export function validateProject(project: Project): StoryIssue[] {
         for (const choice of slide.choices) {
           if (choice.targetSlideId) queue.push(choice.targetSlideId)
         }
-      } else {
+      } else if (!slide.isEnding) {
         const next = project.slides[index + 1]
         if (next) queue.push(next.id)
       }

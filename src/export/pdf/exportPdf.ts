@@ -87,6 +87,10 @@ export function exportProjectAsScriptPdf(project: Project, fileName = 'meine-vis
   w.spacer(4)
   w.heading('Manuskript')
   project.slides.forEach((slide, index) => {
+    if (slide.sectionTitle) {
+      w.spacer(2)
+      w.heading(slide.sectionTitle)
+    }
     w.subheading(`Szene ${index + 1}`)
 
     const background = project.backgrounds.find((b) => b.id === slide.backgroundId)
@@ -116,6 +120,8 @@ export function exportProjectAsScriptPdf(project: Project, fileName = 'meine-vis
         const targetLabel = targetIndex >= 0 ? `Szene ${targetIndex + 1}` : '(kein Ziel gewählt)'
         w.paragraph(`– ${choice.text || '(leere Antwort)'} -> ${targetLabel}`, { indent: 8 })
       }
+    } else if (slide.isEnding) {
+      w.paragraph('(Ende der Geschichte)', { indent: 4 })
     }
 
     w.spacer(4)

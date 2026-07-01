@@ -47,6 +47,10 @@ export interface Slide {
   backgroundFitMode?: 'cover' | 'stretch'
   /** percentage (0-100) used as CSS object-position when backgroundFitMode is 'cover'; defaults to centered */
   backgroundPosition?: { xPct: number; yPct: number }
+  /** shown as a heading above this slide in the slide list, to group it and following slides into a labeled section */
+  sectionTitle?: string
+  /** if true and this slide has no active choices, the story ends here instead of auto-advancing to the next slide */
+  isEnding?: boolean
 }
 
 export interface Project {

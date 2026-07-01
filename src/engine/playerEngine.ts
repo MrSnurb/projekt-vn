@@ -86,6 +86,11 @@ export function reduce(project: Project, state: PlayerState, action: PlayerActio
     return { ...state, awaitingChoice: true }
   }
 
+  // author-marked ending takes priority over falling through to the next slide
+  if (slide.isEnding) {
+    return { ...state, isEnded: true }
+  }
+
   // linear default: move to the next slide in array order
   const currentIndex = getSlideIndex(project, state.currentSlideId)
   const next = project.slides[currentIndex + 1]

@@ -15,6 +15,7 @@ export function ChoiceEditor({ slide }: { slide: Slide }) {
   const updateChoice = useProjectStore((s) => s.updateChoice)
   const removeChoice = useProjectStore((s) => s.removeChoice)
   const addSlide = useProjectStore((s) => s.addSlide)
+  const setSlideIsEnding = useProjectStore((s) => s.setSlideIsEnding)
 
   const hasChoices = !!slide.choices
 
@@ -37,10 +38,21 @@ export function ChoiceEditor({ slide }: { slide: Slide }) {
       </div>
 
       {!hasChoices && (
-        <p className="text-xs text-slate-500">
-          Diese Folie geht automatisch zur nächsten über. Aktiviere Antworten, um dem Spieler eine Wahl zu geben, die
-          die Geschichte verzweigt.
-        </p>
+        <div className="space-y-2">
+          <p className="text-xs text-slate-500">
+            {slide.isEnding
+              ? 'Diese Folie ist ein Ende der Geschichte – hier hört die Story auf.'
+              : 'Diese Folie geht automatisch zur nächsten über. Aktiviere Antworten, um dem Spieler eine Wahl zu geben, die die Geschichte verzweigt.'}
+          </p>
+          <label className="flex items-center gap-1.5 text-xs text-slate-600">
+            <input
+              type="checkbox"
+              checked={!!slide.isEnding}
+              onChange={(e) => setSlideIsEnding(slide.id, e.target.checked)}
+            />
+            Dies ist ein Ende der Geschichte (nicht zur nächsten Folie weitergehen)
+          </label>
+        </div>
       )}
 
       {hasChoices && (

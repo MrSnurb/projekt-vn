@@ -14,62 +14,99 @@ export function SlideThumbnail({ slide, index, isSelected }: SlideThumbnailProps
   const selectSlide = useProjectStore((s) => s.selectSlide)
   const duplicateSlide = useProjectStore((s) => s.duplicateSlide)
   const removeSlide = useProjectStore((s) => s.removeSlide)
+  const setSlideSectionTitle = useProjectStore((s) => s.setSlideSectionTitle)
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: slide.id })
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }
 
   const firstLine = slide.dialogueLines.find((l) => l.text.trim())?.text ?? '(leer)'
+  const hasChoices = !!slide.choices && slide.choices.length > 0
+  const isEnding = !!slide.isEnding && !hasChoices
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      onClick={() => selectSlide(slide.id)}
-      className={`group relative cursor-pointer rounded-md border-2 p-1.5 ${
-        isSelected ? 'border-indigo-500 bg-indigo-50' : 'border-transparent bg-white hover:border-slate-200'
-      }`}
-    >
-      <div className="flex items-center gap-1.5">
-        <button
-          {...attributes}
-          {...listeners}
-          className="cursor-grab touch-none px-0.5 text-slate-300 hover:text-slate-500 active:cursor-grabbing"
-          title="Verschieben"
-        >
-          ⠿
-        </button>
-        <span className="w-5 shrink-0 text-xs font-medium text-slate-400">{index + 1}</span>
-        <div className="relative aspect-video w-24 shrink-0 overflow-hidden rounded bg-slate-200">
-          {background?.imageDataUrl && (
-            <img src={background.imageDataUrl} alt="" className="h-full w-full object-cover" />
-          )}
-          {slide.choices && slide.choices.length > 0 && (
-            <span className="absolute right-0.5 top-0.5 rounded bg-amber-400 px-1 text-[10px] font-bold text-white" title="Enthält Antwortmöglichkeiten">
-              🔀
-            </span>
-          )}
+    <div ref={setNodeRef} style={style}>
+      {slide.sectionTitle !== undefined && (
+        <div className="mb-1 mt-2 flex items-center gap-1 px-1 first:mt-0">
+          <input
+            key={slide.id}
+            defaultValue={slide.sectionTitle}
+            onBlur={(e) => setSlideSectionTitle(slide.id, e.target.value)}
+            placeholder="Überschrift"
+            className="min-w-0 flex-1 rounded border border-transparent bg-transparent px-1 py-0.5 text-xs font-bold uppercase tracking-wide text-slate-500 hover:border-slate-200 focus:border-indigo-500 focus:bg-white focus:outline-none"
+          />
+          <button
+            onClick={() => setSlideSectionTitle(slide.id, null)}
+            title="Überschrift entfernen"
+            className="text-xs text-slate-300 hover:text-red-500"
+          >
+            ✕
+          </button>
         </div>
-        <p className="line-clamp-2 flex-1 text-xs text-slate-600">{firstLine}</p>
-      </div>
-      <div className="mt-1 hidden justify-end gap-1 group-hover:flex">
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            duplicateSlide(slide.id)
-          }}
-          className="rounded px-1.5 py-0.5 text-[11px] text-slate-500 hover:bg-slate-100"
-        >
-          Duplizieren
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            removeSlide(slide.id)
-          }}
-          className="rounded px-1.5 py-0.5 text-[11px] text-red-500 hover:bg-red-50"
-        >
-          Löschen
-        </button>
+      )}
+      <div
+        onClick={() => selectSlide(slide.id)}
+        className={`group relative cursor-pointer rounded-md border-2 p-1.5 ${
+          isSelected ? 'border-indigo-500 bg-indigo-50' : 'border-transparent bg-white hover:border-slate-200'
+        }`}
+      >
+        <div className="flex items-center gap-1.5">
+          <button
+            {...attributes}
+            {...listeners}
+            className="cursor-grab touch-none px-0.5 text-slate-300 hover:text-slate-500 active:cursor-grabbing"
+            title="Verschieben"
+          >
+            ⠿
+          </button>
+          <span className="w-5 shrink-0 text-xs font-medium text-slate-400">{index + 1}</span>
+          <div className="relative aspect-video w-24 shrink-0 overflow-hidden rounded bg-slate-200">
+            {background?.imageDataUrl && (
+              <img src={background.imageDataUrl} alt="" className="h-full w-full object-cover" />
+            )}
+            {hasChoices && (
+              <span className="absolute right-0.5 top-0.5 rounded bg-amber-400 px-1 text-[10px] font-bold text-white" title="Enthält Antwortmöglichkeiten">
+                🔀
+              </span>
+            )}
+            {isEnding && (
+              <span className="absolute right-0.5 top-0.5 rounded bg-slate-700 px-1 text-[10px] font-bold text-white" title="Ende der Geschichte">
+                🏁
+              </span>
+            )}
+          </div>
+          <p className="line-clamp-2 flex-1 text-xs text-slate-600">{firstLine}</p>
+        </div>
+        <div className="mt-1 hidden justify-end gap-1 group-hover:flex">
+          {slide.sectionTitle === undefined && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setSlideSectionTitle(slide.id, 'Neue Überschrift')
+              }}
+              className="mr-auto rounded px-1.5 py-0.5 text-[11px] text-slate-500 hover:bg-slate-100"
+            >
+              + Überschrift
+            </button>
+          )}
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              duplicateSlide(slide.id)
+            }}
+            className="rounded px-1.5 py-0.5 text-[11px] text-slate-500 hover:bg-slate-100"
+          >
+            Duplizieren
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              removeSlide(slide.id)
+            }}
+            className="rounded px-1.5 py-0.5 text-[11px] text-red-500 hover:bg-red-50"
+          >
+            Löschen
+          </button>
+        </div>
       </div>
     </div>
   )
