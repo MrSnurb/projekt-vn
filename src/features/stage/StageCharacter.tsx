@@ -87,11 +87,15 @@ export function StageCharacter({ slideId, character, onStage, stageRef }: StageC
           {character.name}
         </div>
       )}
+      {/* larger-than-it-looks hit area (WCAG-style forgiving touch target) around a small visual dot,
+          otherwise this is very easy to miss and accidentally drag the character instead */}
       <div
         onPointerDown={handleResizePointerDown}
         title="Ziehen zum Vergrößern/Verkleinern"
-        className="absolute -bottom-1.5 -right-1.5 h-4 w-4 cursor-nwse-resize touch-none rounded-full border-2 border-white bg-indigo-500 opacity-0 shadow group-hover:opacity-100"
-      />
+        className="absolute -bottom-4 -right-4 flex h-9 w-9 cursor-nwse-resize touch-none items-center justify-center opacity-0 group-hover:opacity-100"
+      >
+        <div className="h-3.5 w-3.5 rounded-full border-2 border-white bg-indigo-500 shadow" />
+      </div>
     </div>
   )
 }
