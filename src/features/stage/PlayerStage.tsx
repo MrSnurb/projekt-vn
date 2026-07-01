@@ -1,6 +1,7 @@
 import { DialogueBox } from './DialogueBox'
 import { ChoiceOverlay } from './ChoiceOverlay'
 import { getAvailableChoices, getCurrentLine } from '../../engine/playerEngine'
+import { DEFAULT_CHARACTER_SIZE_PCT, DEFAULT_BACKGROUND_POSITION } from '../../types/project'
 import type { Project } from '../../types/project'
 import type { PlayerState } from '../../types/runtime'
 
@@ -32,7 +33,18 @@ export function PlayerStage({ project, state, onAdvance, onChoose }: PlayerStage
       className={`relative aspect-video w-full max-w-5xl overflow-hidden rounded-lg bg-slate-700 shadow-2xl ${choices ? '' : 'cursor-pointer'}`}
     >
       {background?.imageDataUrl && (
-        <img src={background.imageDataUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        <img
+          src={background.imageDataUrl}
+          alt=""
+          className="absolute inset-0 h-full w-full"
+          style={{
+            objectFit: slide.backgroundFitMode === 'stretch' ? 'fill' : 'cover',
+            objectPosition:
+              slide.backgroundFitMode === 'stretch'
+                ? undefined
+                : `${(slide.backgroundPosition ?? DEFAULT_BACKGROUND_POSITION).xPct}% ${(slide.backgroundPosition ?? DEFAULT_BACKGROUND_POSITION).yPct}%`,
+          }}
+        />
       )}
       {slide.charactersOnStage.map((onStage) => {
         const character = project.characters.find((c) => c.id === onStage.characterId)
@@ -43,8 +55,12 @@ export function PlayerStage({ project, state, onAdvance, onChoose }: PlayerStage
             key={onStage.characterId}
             src={sprite}
             alt={character.name}
-            className="absolute w-[28%] max-w-48 -translate-x-1/2 -translate-y-full select-none drop-shadow-lg"
-            style={{ left: `${onStage.position.xPct}%`, top: `${onStage.position.yPct}%` }}
+            className="absolute -translate-x-1/2 -translate-y-full select-none drop-shadow-lg"
+            style={{
+              left: `${onStage.position.xPct}%`,
+              top: `${onStage.position.yPct}%`,
+              width: `${onStage.sizePct ?? DEFAULT_CHARACTER_SIZE_PCT}%`,
+            }}
           />
         )
       })}

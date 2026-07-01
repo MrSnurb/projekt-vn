@@ -1,6 +1,6 @@
 import type PptxGenJS from 'pptxgenjs'
 import type { Project, Slide } from '../../types/project'
-import { NARRATOR_LABEL } from '../../types/project'
+import { NARRATOR_LABEL, DEFAULT_CHARACTER_SIZE_PCT } from '../../types/project'
 
 export const SLIDE_W = 10
 export const SLIDE_H = 5.63
@@ -10,7 +10,19 @@ export function addProjectSlideToPptx(pptx: PptxGenJS, project: Project, slide: 
   const background = project.backgrounds.find((b) => b.id === slide.backgroundId)
 
   if (background?.imageDataUrl) {
-    pptxSlide.addImage({ data: background.imageDataUrl, x: 0, y: 0, w: SLIDE_W, h: SLIDE_H })
+    if (slide.backgroundFitMode === 'stretch') {
+      pptxSlide.addImage({ data: background.imageDataUrl, x: 0, y: 0, w: SLIDE_W, h: SLIDE_H })
+    } else {
+      // pptxgenjs has no equivalent of CSS object-position, so "cover" mode is always centered here
+      pptxSlide.addImage({
+        data: background.imageDataUrl,
+        x: 0,
+        y: 0,
+        w: SLIDE_W,
+        h: SLIDE_H,
+        sizing: { type: 'cover', w: SLIDE_W, h: SLIDE_H },
+      })
+    }
   } else {
     pptxSlide.background = { color: '1E293B' }
   }
@@ -19,7 +31,7 @@ export function addProjectSlideToPptx(pptx: PptxGenJS, project: Project, slide: 
     const character = project.characters.find((c) => c.id === onStage.characterId)
     const sprite = character?.sprites[onStage.expression] ?? Object.values(character?.sprites ?? {})[0]
     if (!character || !sprite) continue
-    const w = SLIDE_W * 0.26
+    const w = SLIDE_W * ((onStage.sizePct ?? DEFAULT_CHARACTER_SIZE_PCT) / 100)
     const h = w * 1.5
     const x = Math.min(Math.max((onStage.position.xPct / 100) * SLIDE_W - w / 2, 0), SLIDE_W - w)
     const y = Math.min(Math.max((onStage.position.yPct / 100) * SLIDE_H - h, 0), SLIDE_H - h)

@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { useProjectStore, useSelectedSlide } from '../../state/projectStore'
 import { useEditorUiStore } from '../../state/editorUiStore'
 import { StageCharacter } from './StageCharacter'
+import { StageBackground } from './StageBackground'
 import { DialogueBox } from './DialogueBox'
 import { ChoiceOverlay } from './ChoiceOverlay'
 
@@ -33,7 +34,7 @@ export function StageCanvas() {
         className="relative aspect-video w-full max-w-4xl overflow-hidden rounded-lg bg-slate-700 shadow-2xl"
       >
         {background?.imageDataUrl ? (
-          <img src={background.imageDataUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          <StageBackground slide={slide} background={background} stageRef={stageRef} />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-sm text-slate-400">
             Kein Hintergrund gewählt

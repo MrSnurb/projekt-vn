@@ -44,6 +44,8 @@ interface ProjectStoreState {
   reorderSlides: (orderedIds: string[]) => void
   selectSlide: (id: string | null) => void
   setSlideBackground: (slideId: string, backgroundId: string | null) => void
+  setSlideBackgroundFitMode: (slideId: string, mode: 'cover' | 'stretch') => void
+  setSlideBackgroundPosition: (slideId: string, position: { xPct: number; yPct: number }) => void
 
   // dialogue lines
   addDialogueLine: (slideId: string) => void
@@ -224,6 +226,16 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
   selectSlide: (id) => set({ selectedSlideId: id }),
   setSlideBackground: (slideId, backgroundId) =>
     set((state) => ({ project: mapSlide(state.project, slideId, (s) => ({ ...s, backgroundId })), isDirty: true })),
+  setSlideBackgroundFitMode: (slideId, mode) =>
+    set((state) => ({
+      project: mapSlide(state.project, slideId, (s) => ({ ...s, backgroundFitMode: mode })),
+      isDirty: true,
+    })),
+  setSlideBackgroundPosition: (slideId, position) =>
+    set((state) => ({
+      project: mapSlide(state.project, slideId, (s) => ({ ...s, backgroundPosition: position })),
+      isDirty: true,
+    })),
 
   addDialogueLine: (slideId) =>
     set((state) => ({

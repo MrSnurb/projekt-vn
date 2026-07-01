@@ -21,6 +21,8 @@ export interface CharacterOnStage {
   expression: string
   /** percentage coordinates (0-100), resolution independent */
   position: { xPct: number; yPct: number }
+  /** width as a percentage of the stage width; defaults to DEFAULT_CHARACTER_SIZE_PCT when undefined */
+  sizePct?: number
 }
 
 export interface DialogueLine {
@@ -41,6 +43,10 @@ export interface Slide {
   dialogueLines: DialogueLine[]
   /** if present (even empty array), this slide ends in a player choice instead of auto-advancing */
   choices?: Choice[]
+  /** 'cover' (default): crop-to-fill, draggable via backgroundPosition. 'stretch': fill exactly, distorting aspect ratio. */
+  backgroundFitMode?: 'cover' | 'stretch'
+  /** percentage (0-100) used as CSS object-position when backgroundFitMode is 'cover'; defaults to centered */
+  backgroundPosition?: { xPct: number; yPct: number }
 }
 
 export interface Project {
@@ -55,3 +61,5 @@ export function createEmptyProject(): Project {
 
 export const NARRATOR_LABEL = 'Erzähler'
 export const DEFAULT_EXPRESSION = 'neutral'
+export const DEFAULT_CHARACTER_SIZE_PCT = 28
+export const DEFAULT_BACKGROUND_POSITION = { xPct: 50, yPct: 50 }
