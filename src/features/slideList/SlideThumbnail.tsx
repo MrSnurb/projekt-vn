@@ -76,7 +76,8 @@ export function SlideThumbnail({ slide, index, isSelected }: SlideThumbnailProps
           </div>
           <p className="line-clamp-2 flex-1 text-xs text-slate-600">{firstLine}</p>
         </div>
-        <div className="mt-1 hidden justify-end gap-1 group-hover:flex">
+        {/* visible on hover (mouse) OR when selected (tap-to-select on touch devices, which have no hover) */}
+        <div className={`mt-1 justify-end gap-1 group-hover:flex ${isSelected ? 'flex' : 'hidden'}`}>
           {slide.sectionTitle === undefined && (
             <button
               onClick={(e) => {

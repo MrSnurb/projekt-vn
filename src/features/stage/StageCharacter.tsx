@@ -88,11 +88,14 @@ export function StageCharacter({ slideId, character, onStage, stageRef }: StageC
         </div>
       )}
       {/* larger-than-it-looks hit area (WCAG-style forgiving touch target) around a small visual dot,
-          otherwise this is very easy to miss and accidentally drag the character instead */}
+          otherwise this is very easy to miss and accidentally drag the character instead.
+          Visible on hover (mouse) OR when selected (tap-to-select on touch devices, which have no hover). */}
       <div
         onPointerDown={handleResizePointerDown}
         title="Ziehen zum Vergrößern/Verkleinern"
-        className="absolute -bottom-4 -right-4 flex h-9 w-9 cursor-nwse-resize touch-none items-center justify-center opacity-0 group-hover:opacity-100"
+        className={`absolute -bottom-4 -right-4 flex h-9 w-9 cursor-nwse-resize touch-none items-center justify-center group-hover:opacity-100 ${
+          isSelected ? 'opacity-100' : 'opacity-0'
+        }`}
       >
         <div className="h-3.5 w-3.5 rounded-full border-2 border-white bg-indigo-500 shadow" />
       </div>
