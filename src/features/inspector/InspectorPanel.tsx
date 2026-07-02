@@ -1,6 +1,7 @@
 import { useSelectedSlide, useProjectStore } from '../../state/projectStore'
 import { useEditorUiStore } from '../../state/editorUiStore'
 import { validateProject } from '../../engine/validation'
+import { TextInput } from '../../components/TextInput'
 import { SlideBackgroundPicker } from './SlideBackgroundPicker'
 import { SlideCharacterPicker } from './SlideCharacterPicker'
 import { DialogueEditor } from './DialogueEditor'
@@ -9,6 +10,7 @@ import { ChoiceEditor } from './ChoiceEditor'
 export function InspectorPanel() {
   const slide = useSelectedSlide()
   const project = useProjectStore((s) => s.project)
+  const setSlideName = useProjectStore((s) => s.setSlideName)
   const isOpen = useEditorUiStore((s) => s.isInspectorPanelOpen)
   const closeInspectorPanel = useEditorUiStore((s) => s.closeInspectorPanel)
 
@@ -38,6 +40,14 @@ export function InspectorPanel() {
                 ))}
               </div>
             )}
+            <div>
+              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Name der Folie</h3>
+              <TextInput
+                value={slide.name ?? ''}
+                onChange={(e) => setSlideName(slide.id, e.target.value)}
+                placeholder="z.B. Eingang zur Höhle"
+              />
+            </div>
             <SlideBackgroundPicker slide={slide} />
             <SlideCharacterPicker slide={slide} />
             <DialogueEditor slide={slide} />

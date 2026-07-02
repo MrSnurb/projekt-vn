@@ -50,6 +50,8 @@ interface ProjectStoreState {
   setSlideSectionTitle: (slideId: string, title: string | null) => void
   setSlideIsEnding: (slideId: string, isEnding: boolean) => void
   setSlideNextSlideId: (slideId: string, nextSlideId: string | null) => void
+  setSlideName: (slideId: string, name: string) => void
+  setSlideColorTag: (slideId: string, colorTag: string | null) => void
 
   // dialogue lines
   addDialogueLine: (slideId: string) => void
@@ -263,6 +265,16 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
         nextSlideId: nextSlideId === null ? undefined : nextSlideId,
         isEnding: nextSlideId === null ? s.isEnding : false,
       })),
+      isDirty: true,
+    })),
+  setSlideName: (slideId, name) =>
+    set((state) => ({
+      project: mapSlide(state.project, slideId, (s) => ({ ...s, name })),
+      isDirty: true,
+    })),
+  setSlideColorTag: (slideId, colorTag) =>
+    set((state) => ({
+      project: mapSlide(state.project, slideId, (s) => ({ ...s, colorTag: colorTag ?? undefined })),
       isDirty: true,
     })),
 

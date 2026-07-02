@@ -7,6 +7,13 @@ const LINE_HEIGHT = 6
 const PAGE_HEIGHT = 297
 const PAGE_WIDTH = 210
 
+function sceneLabel(project: Project, slideId: string | undefined): string {
+  const index = project.slides.findIndex((s) => s.id === slideId)
+  if (index < 0) return '(kein Ziel gewählt)'
+  const name = project.slides[index].name?.trim()
+  return `Szene ${index + 1}${name ? `: ${name}` : ''}`
+}
+
 function createWriter(doc: jsPDF) {
   let y = MARGIN
 
@@ -91,7 +98,7 @@ export function exportProjectAsScriptPdf(project: Project, fileName = 'meine-vis
       w.spacer(2)
       w.heading(slide.sectionTitle)
     }
-    w.subheading(`Szene ${index + 1}`)
+    w.subheading(`Szene ${index + 1}${slide.name?.trim() ? `: ${slide.name.trim()}` : ''}`)
 
     const background = project.backgrounds.find((b) => b.id === slide.backgroundId)
     if (background) {
@@ -116,16 +123,12 @@ export function exportProjectAsScriptPdf(project: Project, fileName = 'meine-vis
     if (slide.choices && slide.choices.length > 0) {
       w.paragraph('Antwortmöglichkeiten:', { indent: 4 })
       for (const choice of slide.choices) {
-        const targetIndex = project.slides.findIndex((s) => s.id === choice.targetSlideId)
-        const targetLabel = targetIndex >= 0 ? `Szene ${targetIndex + 1}` : '(kein Ziel gewählt)'
-        w.paragraph(`– ${choice.text || '(leere Antwort)'} -> ${targetLabel}`, { indent: 8 })
+        w.paragraph(`– ${choice.text || '(leere Antwort)'} -> ${sceneLabel(project, choice.targetSlideId)}`, { indent: 8 })
       }
     } else if (slide.isEnding) {
       w.paragraph('(Ende der Geschichte)', { indent: 4 })
     } else if (slide.nextSlideId !== undefined) {
-      const targetIndex = project.slides.findIndex((s) => s.id === slide.nextSlideId)
-      const targetLabel = targetIndex >= 0 ? `Szene ${targetIndex + 1}` : '(kein Ziel gewählt)'
-      w.paragraph(`Weiter mit: ${targetLabel}`, { indent: 4 })
+      w.paragraph(`Weiter mit: ${sceneLabel(project, slide.nextSlideId)}`, { indent: 4 })
     }
 
     w.spacer(4)

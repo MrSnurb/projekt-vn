@@ -38,6 +38,10 @@ export interface Choice {
 
 export interface Slide {
   id: string
+  /** optional author-facing label, shown in the slide list, target dropdowns, and the PDF manuscript */
+  name?: string
+  /** optional color tag for visually grouping slides in the slide list (e.g. by branch) */
+  colorTag?: string
   backgroundId: string | null
   charactersOnStage: CharacterOnStage[]
   dialogueLines: DialogueLine[]
@@ -82,3 +86,5 @@ export const DIALOGUE_FONT_SIZE_PRESETS = [
   { label: 'Groß', px: 32 },
   { label: 'Sehr groß', px: 48 },
 ]
+/** pastel palette for tagging slides in the slide list, e.g. to group branches by color */
+export const SLIDE_COLOR_TAGS = ['#fca5a5', '#fdba74', '#fde047', '#86efac', '#93c5fd', '#c4b5fd', '#f9a8d4']

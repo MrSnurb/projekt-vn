@@ -3,6 +3,7 @@ import { Button } from '../../components/Button'
 import type { Slide } from '../../types/project'
 
 function slideLabel(slide: Slide, index: number): string {
+  if (slide.name?.trim()) return `${index + 1}. ${slide.name.trim()}`
   const firstLine = slide.dialogueLines.find((l) => l.text.trim())?.text
   return `${index + 1}. ${firstLine ? firstLine.slice(0, 30) : '(leere Folie)'}`
 }

@@ -2,6 +2,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useProjectStore } from '../../state/projectStore'
 import { useEditorUiStore } from '../../state/editorUiStore'
+import { SLIDE_COLOR_TAGS } from '../../types/project'
 import type { Slide } from '../../types/project'
 
 interface SlideThumbnailProps {
@@ -16,12 +17,14 @@ export function SlideThumbnail({ slide, index, isSelected }: SlideThumbnailProps
   const duplicateSlide = useProjectStore((s) => s.duplicateSlide)
   const removeSlide = useProjectStore((s) => s.removeSlide)
   const setSlideSectionTitle = useProjectStore((s) => s.setSlideSectionTitle)
+  const setSlideColorTag = useProjectStore((s) => s.setSlideColorTag)
   const closeSlidesPanel = useEditorUiStore((s) => s.closeSlidesPanel)
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: slide.id })
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }
 
   const firstLine = slide.dialogueLines.find((l) => l.text.trim())?.text ?? '(leer)'
+  const name = slide.name?.trim()
   const hasChoices = !!slide.choices && slide.choices.length > 0
   const isEnding = !!slide.isEnding && !hasChoices
   const hasCustomNext = !hasChoices && !isEnding && slide.nextSlideId !== undefined
@@ -56,6 +59,13 @@ export function SlideThumbnail({ slide, index, isSelected }: SlideThumbnailProps
         }`}
       >
         <div className="flex items-center gap-1.5">
+          {slide.colorTag && (
+            <span
+              className="h-8 w-1 shrink-0 rounded-full"
+              style={{ backgroundColor: slide.colorTag }}
+              title="Farbmarkierung"
+            />
+          )}
           <button
             {...attributes}
             {...listeners}
@@ -85,39 +95,73 @@ export function SlideThumbnail({ slide, index, isSelected }: SlideThumbnailProps
               </span>
             )}
           </div>
-          <p className="line-clamp-2 flex-1 text-xs text-slate-600">{firstLine}</p>
+          <p className="line-clamp-2 flex-1 text-xs text-slate-600">
+            {name && <span className="font-semibold text-slate-700">{name}</span>}
+            {name && ' — '}
+            {firstLine}
+          </p>
         </div>
         {/* visible on hover (mouse) OR when selected (tap-to-select on touch devices, which have no hover) */}
-        <div className={`mt-1 justify-end gap-1 group-hover:flex ${isSelected ? 'flex' : 'hidden'}`}>
-          {slide.sectionTitle === undefined && (
+        <div className={`mt-1 flex-col gap-1 group-hover:flex ${isSelected ? 'flex' : 'hidden'}`}>
+          <div className="flex items-center gap-1">
+            {SLIDE_COLOR_TAGS.map((color) => (
+              <button
+                key={color}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setSlideColorTag(slide.id, slide.colorTag === color ? null : color)
+                }}
+                title="Farbe zuweisen"
+                className={`h-3.5 w-3.5 shrink-0 rounded-full ${
+                  slide.colorTag === color ? 'ring-2 ring-offset-1 ring-slate-500' : ''
+                }`}
+                style={{ backgroundColor: color }}
+              />
+            ))}
+            {slide.colorTag && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setSlideColorTag(slide.id, null)
+                }}
+                title="Farbmarkierung entfernen"
+                className="text-[10px] text-slate-400 hover:text-red-500"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+          <div className="flex justify-end gap-1">
+            {slide.sectionTitle === undefined && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setSlideSectionTitle(slide.id, 'Neue Überschrift')
+                }}
+                className="mr-auto rounded px-1.5 py-0.5 text-[11px] text-slate-500 hover:bg-slate-100"
+              >
+                + Überschrift
+              </button>
+            )}
             <button
               onClick={(e) => {
                 e.stopPropagation()
-                setSlideSectionTitle(slide.id, 'Neue Überschrift')
+                duplicateSlide(slide.id)
               }}
-              className="mr-auto rounded px-1.5 py-0.5 text-[11px] text-slate-500 hover:bg-slate-100"
+              className="rounded px-1.5 py-0.5 text-[11px] text-slate-500 hover:bg-slate-100"
             >
-              + Überschrift
+              Duplizieren
             </button>
-          )}
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              duplicateSlide(slide.id)
-            }}
-            className="rounded px-1.5 py-0.5 text-[11px] text-slate-500 hover:bg-slate-100"
-          >
-            Duplizieren
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              removeSlide(slide.id)
-            }}
-            className="rounded px-1.5 py-0.5 text-[11px] text-red-500 hover:bg-red-50"
-          >
-            Löschen
-          </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                removeSlide(slide.id)
+              }}
+              className="rounded px-1.5 py-0.5 text-[11px] text-red-500 hover:bg-red-50"
+            >
+              Löschen
+            </button>
+          </div>
         </div>
       </div>
     </div>
