@@ -73,6 +73,6 @@ export const DEFAULT_DIALOGUE_FONT_SIZE_PX = 18
 export const DIALOGUE_FONT_SIZE_PRESETS = [
   { label: 'Klein', px: 14 },
   { label: 'Normal', px: 18 },
-  { label: 'Groß', px: 26 },
-  { label: 'Sehr groß', px: 36 },
+  { label: 'Groß', px: 32 },
+  { label: 'Sehr groß', px: 48 },
 ]
