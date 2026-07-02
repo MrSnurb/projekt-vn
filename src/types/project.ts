@@ -51,6 +51,12 @@ export interface Slide {
   sectionTitle?: string
   /** if true and this slide has no active choices, the story ends here instead of auto-advancing to the next slide */
   isEnding?: boolean
+  /**
+   * Explicit override for which slide plays next when this slide has no active choices, instead of
+   * relying on array order. `undefined` = automatic (next slide in the list). `''` = this mode is
+   * selected but no target has been chosen yet (flagged by validation). Ignored if choices or isEnding are set.
+   */
+  nextSlideId?: string
 }
 
 export interface Project {

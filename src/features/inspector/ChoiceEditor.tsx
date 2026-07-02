@@ -16,8 +16,11 @@ export function ChoiceEditor({ slide }: { slide: Slide }) {
   const removeChoice = useProjectStore((s) => s.removeChoice)
   const addSlide = useProjectStore((s) => s.addSlide)
   const setSlideIsEnding = useProjectStore((s) => s.setSlideIsEnding)
+  const setSlideNextSlideId = useProjectStore((s) => s.setSlideNextSlideId)
 
   const hasChoices = !!slide.choices
+  const hasCustomNext = slide.nextSlideId !== undefined
+  const isAutomatic = !hasCustomNext && !slide.isEnding
 
   function createLinkedSlide(choiceIndex: number) {
     const newId = addSlide(slide.id)
@@ -40,18 +43,57 @@ export function ChoiceEditor({ slide }: { slide: Slide }) {
       {!hasChoices && (
         <div className="space-y-2">
           <p className="text-xs text-slate-500">
-            {slide.isEnding
-              ? 'Diese Folie ist ein Ende der Geschichte – hier hört die Story auf.'
-              : 'Diese Folie geht automatisch zur nächsten über. Aktiviere Antworten, um dem Spieler eine Wahl zu geben, die die Geschichte verzweigt.'}
+            Was passiert, wenn der Dialog dieser Folie zu Ende ist? Aktiviere stattdessen Antworten, um dem Spieler
+            eine Wahl zu geben, die die Geschichte verzweigt.
           </p>
-          <label className="flex items-center gap-1.5 text-xs text-slate-600">
-            <input
-              type="checkbox"
-              checked={!!slide.isEnding}
-              onChange={(e) => setSlideIsEnding(slide.id, e.target.checked)}
-            />
-            Dies ist ein Ende der Geschichte (nicht zur nächsten Folie weitergehen)
-          </label>
+          <div className="space-y-1.5">
+            <label className="flex items-center gap-1.5 text-xs text-slate-600">
+              <input
+                type="radio"
+                name={`slide-flow-${slide.id}`}
+                checked={isAutomatic}
+                onChange={() => {
+                  setSlideIsEnding(slide.id, false)
+                  setSlideNextSlideId(slide.id, null)
+                }}
+              />
+              Automatisch zur nächsten Folie in der Liste
+            </label>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600">
+              <input
+                type="radio"
+                name={`slide-flow-${slide.id}`}
+                checked={hasCustomNext}
+                onChange={() => setSlideNextSlideId(slide.id, '')}
+              />
+              Weiter mit bestimmter Folie
+            </label>
+            {hasCustomNext && (
+              <select
+                value={slide.nextSlideId}
+                onChange={(e) => setSlideNextSlideId(slide.id, e.target.value)}
+                className="ml-5 rounded border border-slate-200 bg-white px-1.5 py-1 text-xs"
+              >
+                <option value="">– Folie wählen –</option>
+                {slides
+                  .filter((s) => s.id !== slide.id)
+                  .map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {slideLabel(s, slides.indexOf(s))}
+                    </option>
+                  ))}
+              </select>
+            )}
+            <label className="flex items-center gap-1.5 text-xs text-slate-600">
+              <input
+                type="radio"
+                name={`slide-flow-${slide.id}`}
+                checked={!!slide.isEnding}
+                onChange={() => setSlideIsEnding(slide.id, true)}
+              />
+              Dies ist ein Ende der Geschichte
+            </label>
+          </div>
         </div>
       )}
 

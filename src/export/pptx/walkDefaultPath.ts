@@ -24,6 +24,9 @@ export function walkDefaultPath(project: Project): string[] {
     if (current.choices && current.choices.length > 0) {
       const targetId: string | undefined = current.choices[0]?.targetSlideId
       current = project.slides.find((s) => s.id === targetId)
+    } else if (current.nextSlideId !== undefined) {
+      const targetId: string = current.nextSlideId
+      current = project.slides.find((s) => s.id === targetId)
     } else {
       const index = project.slides.indexOf(current)
       current = project.slides[index + 1]

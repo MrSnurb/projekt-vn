@@ -122,6 +122,10 @@ export function exportProjectAsScriptPdf(project: Project, fileName = 'meine-vis
       }
     } else if (slide.isEnding) {
       w.paragraph('(Ende der Geschichte)', { indent: 4 })
+    } else if (slide.nextSlideId !== undefined) {
+      const targetIndex = project.slides.findIndex((s) => s.id === slide.nextSlideId)
+      const targetLabel = targetIndex >= 0 ? `Szene ${targetIndex + 1}` : '(kein Ziel gewählt)'
+      w.paragraph(`Weiter mit: ${targetLabel}`, { indent: 4 })
     }
 
     w.spacer(4)

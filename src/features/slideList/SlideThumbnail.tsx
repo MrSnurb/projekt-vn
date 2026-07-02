@@ -24,6 +24,7 @@ export function SlideThumbnail({ slide, index, isSelected }: SlideThumbnailProps
   const firstLine = slide.dialogueLines.find((l) => l.text.trim())?.text ?? '(leer)'
   const hasChoices = !!slide.choices && slide.choices.length > 0
   const isEnding = !!slide.isEnding && !hasChoices
+  const hasCustomNext = !hasChoices && !isEnding && slide.nextSlideId !== undefined
 
   return (
     <div ref={setNodeRef} style={style}>
@@ -76,6 +77,11 @@ export function SlideThumbnail({ slide, index, isSelected }: SlideThumbnailProps
             {isEnding && (
               <span className="absolute right-0.5 top-0.5 rounded bg-slate-700 px-1 text-[10px] font-bold text-white" title="Ende der Geschichte">
                 🏁
+              </span>
+            )}
+            {hasCustomNext && (
+              <span className="absolute right-0.5 top-0.5 rounded bg-sky-500 px-1 text-[10px] font-bold text-white" title="Springt zu einer bestimmten Folie">
+                ➡️
               </span>
             )}
           </div>

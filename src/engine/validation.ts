@@ -29,6 +29,8 @@ export function validateProject(project: Project): StoryIssue[] {
           issues.push({ slideId: slide.id, message: `Antwort "${choice.text || '(leer)'}" verweist auf keine gültige Folie.` })
         }
       }
+    } else if (!slide.isEnding && slide.nextSlideId !== undefined && !slideIds.has(slide.nextSlideId)) {
+      issues.push({ slideId: slide.id, message: 'Es ist noch keine Ziel-Folie für "Weiter mit bestimmter Folie" ausgewählt.' })
     }
   }
 
@@ -46,7 +48,11 @@ export function validateProject(project: Project): StoryIssue[] {
         for (const choice of slide.choices) {
           if (choice.targetSlideId) queue.push(choice.targetSlideId)
         }
-      } else if (!slide.isEnding) {
+      } else if (slide.isEnding) {
+        // no further reachability from an ending
+      } else if (slide.nextSlideId !== undefined) {
+        if (slide.nextSlideId) queue.push(slide.nextSlideId)
+      } else {
         const next = project.slides[index + 1]
         if (next) queue.push(next.id)
       }

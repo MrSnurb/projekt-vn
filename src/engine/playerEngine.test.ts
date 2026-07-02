@@ -7,6 +7,7 @@ function slide(
   lines: string[],
   choices?: { text: string; targetSlideId: string }[],
   isEnding?: boolean,
+  nextSlideId?: string,
 ) {
   return {
     id,
@@ -15,6 +16,7 @@ function slide(
     dialogueLines: lines.map((text) => ({ speakerCharacterId: null, text })),
     ...(choices ? { choices } : {}),
     ...(isEnding ? { isEnding } : {}),
+    ...(nextSlideId !== undefined ? { nextSlideId } : {}),
   }
 }
 
@@ -214,5 +216,29 @@ describe('playerEngine', () => {
     state = reduce(project, state, { type: 'CHOOSE', choiceIndex: 0 })
     expect(state.currentSlideId).toBe('b')
     expect(state.isEnded).toBe(false)
+  })
+
+  it('follows an explicit nextSlideId override instead of array order', () => {
+    const project: Project = {
+      characters: [],
+      backgrounds: [],
+      slides: [slide('a', ['jumps ahead'], undefined, undefined, 'c'), slide('b', ['skipped']), slide('c', ['landed here'])],
+    }
+    let state = getInitialState(project)
+    state = reduce(project, state, { type: 'ADVANCE_LINE' })
+    expect(state.currentSlideId).toBe('c')
+  })
+
+  it('does not advance when nextSlideId is set but still unselected (empty string)', () => {
+    const project: Project = {
+      characters: [],
+      backgrounds: [],
+      slides: [slide('a', ['pending target']), slide('b', ['next in array'])],
+    }
+    ;(project.slides[0] as { nextSlideId?: string }).nextSlideId = ''
+    let state = getInitialState(project)
+    state = reduce(project, state, { type: 'ADVANCE_LINE' })
+    // falls back to array order rather than crashing on an empty target
+    expect(state.currentSlideId).toBe('b')
   })
 })

@@ -91,6 +91,11 @@ export function reduce(project: Project, state: PlayerState, action: PlayerActio
     return { ...state, isEnded: true }
   }
 
+  // explicit "goto slide" override takes priority over array order
+  if (slide.nextSlideId) {
+    return goToSlide(project, state, slide.nextSlideId)
+  }
+
   // linear default: move to the next slide in array order
   const currentIndex = getSlideIndex(project, state.currentSlideId)
   const next = project.slides[currentIndex + 1]
