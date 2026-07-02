@@ -67,7 +67,12 @@ export function PlayerStage({ project, state, onAdvance, onChoose }: PlayerStage
       {choices ? (
         <ChoiceOverlay choices={choices} onChoose={onChoose} />
       ) : (
-        <DialogueBox speakerName={speaker?.name ?? null} speakerColor={speaker?.color ?? null} text={currentLine?.text ?? ''} />
+        <DialogueBox
+          speakerName={speaker?.name ?? null}
+          speakerColor={speaker?.color ?? null}
+          text={currentLine?.text ?? ''}
+          fontSizePx={project.dialogueFontSizePx}
+        />
       )}
     </div>
   )

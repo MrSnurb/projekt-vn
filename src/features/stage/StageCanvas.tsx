@@ -10,6 +10,7 @@ export function StageCanvas() {
   const slide = useSelectedSlide()
   const characters = useProjectStore((s) => s.project.characters)
   const background = useProjectStore((s) => s.project.backgrounds.find((b) => b.id === slide?.backgroundId))
+  const dialogueFontSizePx = useProjectStore((s) => s.project.dialogueFontSizePx)
   const selectStageCharacter = useEditorUiStore((s) => s.selectStageCharacter)
   const stageRef = useRef<HTMLDivElement>(null)
 
@@ -61,7 +62,12 @@ export function StageCanvas() {
           {slide.choices && slide.choices.length > 0 ? (
             <ChoiceOverlay choices={slide.choices} disabled />
           ) : (
-            <DialogueBox speakerName={speaker?.name ?? null} speakerColor={speaker?.color ?? null} text={firstLine?.text ?? ''} />
+            <DialogueBox
+              speakerName={speaker?.name ?? null}
+              speakerColor={speaker?.color ?? null}
+              text={firstLine?.text ?? ''}
+              fontSizePx={dialogueFontSizePx}
+            />
           )}
         </div>
       </div>

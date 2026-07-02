@@ -23,6 +23,7 @@ interface ProjectStoreState {
 
   loadProject: (project: Project) => void
   markSaved: () => void
+  setDialogueFontSize: (sizePx: number) => void
 
   // characters
   addCharacter: (input: { name: string; color: string }) => string
@@ -76,6 +77,8 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
   loadProject: (project) =>
     set({ project, selectedSlideId: project.slides[0]?.id ?? null, isDirty: false }),
   markSaved: () => set({ isDirty: false }),
+  setDialogueFontSize: (sizePx) =>
+    set((state) => ({ project: { ...state.project, dialogueFontSizePx: sizePx }, isDirty: true })),
 
   addCharacter: ({ name, color }) => {
     const id = createId()

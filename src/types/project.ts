@@ -57,6 +57,8 @@ export interface Project {
   characters: Character[]
   backgrounds: Background[]
   slides: Slide[]
+  /** font size (px) for the dialogue box text, applies to the whole story; defaults to DEFAULT_DIALOGUE_FONT_SIZE_PX */
+  dialogueFontSizePx?: number
 }
 
 export function createEmptyProject(): Project {
@@ -67,3 +69,10 @@ export const NARRATOR_LABEL = 'Erzähler'
 export const DEFAULT_EXPRESSION = 'neutral'
 export const DEFAULT_CHARACTER_SIZE_PCT = 28
 export const DEFAULT_BACKGROUND_POSITION = { xPct: 50, yPct: 50 }
+export const DEFAULT_DIALOGUE_FONT_SIZE_PX = 16
+export const DIALOGUE_FONT_SIZE_PRESETS = [
+  { label: 'Klein', px: 14 },
+  { label: 'Normal', px: 16 },
+  { label: 'Groß', px: 20 },
+  { label: 'Sehr groß', px: 24 },
+]
