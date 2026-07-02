@@ -4,7 +4,7 @@ Erstelle Visual Novels wie eine Präsentation: Folie für Folie mit Hintergrund,
 Antwortmöglichkeiten, die die Geschichte verzweigen lassen. Läuft komplett im Browser, keine
 Serverkomponente nötig.
 
-**Live-Demo:** https://mrsnurb.github.io/projekt-vn/
+**Live-Demo:** https://bn-app.github.io/projekt-vn/
 
 ## Funktionen
 
