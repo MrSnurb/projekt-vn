@@ -69,10 +69,10 @@ export const NARRATOR_LABEL = 'Erzähler'
 export const DEFAULT_EXPRESSION = 'neutral'
 export const DEFAULT_CHARACTER_SIZE_PCT = 28
 export const DEFAULT_BACKGROUND_POSITION = { xPct: 50, yPct: 50 }
-export const DEFAULT_DIALOGUE_FONT_SIZE_PX = 16
+export const DEFAULT_DIALOGUE_FONT_SIZE_PX = 18
 export const DIALOGUE_FONT_SIZE_PRESETS = [
   { label: 'Klein', px: 14 },
-  { label: 'Normal', px: 16 },
-  { label: 'Groß', px: 20 },
-  { label: 'Sehr groß', px: 24 },
+  { label: 'Normal', px: 18 },
+  { label: 'Groß', px: 26 },
+  { label: 'Sehr groß', px: 36 },
 ]
