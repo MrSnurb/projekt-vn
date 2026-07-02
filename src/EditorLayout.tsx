@@ -25,6 +25,12 @@ export function EditorLayout() {
   const setActiveTab = useEditorUiStore((s) => s.setActiveTab)
   const isPlaytestOpen = useEditorUiStore((s) => s.isPlaytestOpen)
   const openPlaytest = useEditorUiStore((s) => s.openPlaytest)
+  const isSlidesPanelOpen = useEditorUiStore((s) => s.isSlidesPanelOpen)
+  const isInspectorPanelOpen = useEditorUiStore((s) => s.isInspectorPanelOpen)
+  const openSlidesPanel = useEditorUiStore((s) => s.openSlidesPanel)
+  const openInspectorPanel = useEditorUiStore((s) => s.openInspectorPanel)
+  const closeSlidesPanel = useEditorUiStore((s) => s.closeSlidesPanel)
+  const closeInspectorPanel = useEditorUiStore((s) => s.closeInspectorPanel)
   const project = useProjectStore((s) => s.project)
   const isDirty = useProjectStore((s) => s.isDirty)
   const { save, saveAs, open, newProject, canSaveInPlace } = useProjectPersistence()
@@ -42,17 +48,26 @@ export function EditorLayout() {
 
   return (
     <div className="flex h-screen flex-col">
-      <header className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4 py-2">
-        <div className="flex items-center gap-4">
-          <h1 className="text-sm font-bold text-slate-900">
+      <header className="flex shrink-0 flex-col gap-2 border-b border-slate-200 bg-white px-4 py-2 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-2 md:gap-4">
+          {activeTab === 'slides' && (
+            <button
+              onClick={openSlidesPanel}
+              className="shrink-0 rounded p-1.5 text-lg leading-none text-slate-500 hover:bg-slate-100 md:hidden"
+              title="Folien anzeigen"
+            >
+              ☰
+            </button>
+          )}
+          <h1 className="shrink-0 whitespace-nowrap text-sm font-bold text-slate-900">
             Visual Novel Editor{isDirty ? ' •' : ''}
           </h1>
-          <nav className="flex gap-1">
+          <nav className="flex gap-1 overflow-x-auto">
             {TABS.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+                className={`shrink-0 rounded-md px-3 py-1.5 text-sm font-medium ${
                   activeTab === tab.id ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500 hover:bg-slate-100'
                 }`}
               >
@@ -60,27 +75,42 @@ export function EditorLayout() {
               </button>
             ))}
           </nav>
+          {activeTab === 'slides' && (
+            <button
+              onClick={openInspectorPanel}
+              className="ml-auto shrink-0 rounded p-1.5 text-lg leading-none text-slate-500 hover:bg-slate-100 md:hidden"
+              title="Bearbeiten anzeigen"
+            >
+              ✏️
+            </button>
+          )}
         </div>
-        <div className="flex gap-2">
-          <Button variant="ghost" onClick={newProject}>
+        <div className="flex gap-2 overflow-x-auto pb-1 md:pb-0">
+          <Button variant="ghost" className="shrink-0" onClick={newProject}>
             Neu
           </Button>
-          <Button variant="ghost" onClick={() => void open()}>
+          <Button variant="ghost" className="shrink-0" onClick={() => void open()}>
             Öffnen…
           </Button>
-          <Button variant="secondary" onClick={() => void save()} title={canSaveInPlace ? 'Strg+S' : undefined}>
+          <Button variant="secondary" className="shrink-0" onClick={() => void save()} title={canSaveInPlace ? 'Strg+S' : undefined}>
             Speichern
           </Button>
           {canSaveInPlace && (
-            <Button variant="ghost" onClick={() => void saveAs()}>
+            <Button variant="ghost" className="shrink-0" onClick={() => void saveAs()}>
               Speichern unter…
             </Button>
           )}
-          <Button variant="secondary" onClick={() => exportProjectAsHtml(project)} disabled={project.slides.length === 0}>
+          <Button
+            variant="secondary"
+            className="shrink-0"
+            onClick={() => exportProjectAsHtml(project)}
+            disabled={project.slides.length === 0}
+          >
             ⭳ Als HTML exportieren
           </Button>
           <Button
             variant="ghost"
+            className="shrink-0"
             onClick={() => void exportProjectAsPptx(project)}
             disabled={project.slides.length === 0}
             title="Lineares Storyboard – Verzweigungen sind hier nicht interaktiv, nur als Text sichtbar"
@@ -89,21 +119,31 @@ export function EditorLayout() {
           </Button>
           <Button
             variant="ghost"
+            className="shrink-0"
             onClick={() => exportProjectAsScriptPdf(project)}
             disabled={project.slides.length === 0}
             title="Figuren, Locations und der gesamte Dialogtext als druckbares Manuskript"
           >
             ⭳ Als PDF (Manuskript)
           </Button>
-          <Button variant="primary" onClick={openPlaytest} disabled={project.slides.length === 0}>
+          <Button variant="primary" className="shrink-0" onClick={openPlaytest} disabled={project.slides.length === 0}>
             ▶ Playtest
           </Button>
         </div>
       </header>
 
-      <main className="flex flex-1 overflow-hidden">
+      <main className="relative flex flex-1 overflow-hidden">
         {activeTab === 'slides' && (
           <>
+            {(isSlidesPanelOpen || isInspectorPanelOpen) && (
+              <div
+                onClick={() => {
+                  closeSlidesPanel()
+                  closeInspectorPanel()
+                }}
+                className="fixed inset-0 z-20 bg-black/30 md:hidden"
+              />
+            )}
             <SlideList />
             <StageCanvas />
             <InspectorPanel />

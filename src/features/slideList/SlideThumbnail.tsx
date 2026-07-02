@@ -1,6 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useProjectStore } from '../../state/projectStore'
+import { useEditorUiStore } from '../../state/editorUiStore'
 import type { Slide } from '../../types/project'
 
 interface SlideThumbnailProps {
@@ -15,6 +16,7 @@ export function SlideThumbnail({ slide, index, isSelected }: SlideThumbnailProps
   const duplicateSlide = useProjectStore((s) => s.duplicateSlide)
   const removeSlide = useProjectStore((s) => s.removeSlide)
   const setSlideSectionTitle = useProjectStore((s) => s.setSlideSectionTitle)
+  const closeSlidesPanel = useEditorUiStore((s) => s.closeSlidesPanel)
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: slide.id })
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }
@@ -44,7 +46,10 @@ export function SlideThumbnail({ slide, index, isSelected }: SlideThumbnailProps
         </div>
       )}
       <div
-        onClick={() => selectSlide(slide.id)}
+        onClick={() => {
+          selectSlide(slide.id)
+          closeSlidesPanel()
+        }}
         className={`group relative cursor-pointer rounded-md border-2 p-1.5 ${
           isSelected ? 'border-indigo-500 bg-indigo-50' : 'border-transparent bg-white hover:border-slate-200'
         }`}

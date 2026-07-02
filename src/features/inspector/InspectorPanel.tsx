@@ -1,4 +1,5 @@
 import { useSelectedSlide, useProjectStore } from '../../state/projectStore'
+import { useEditorUiStore } from '../../state/editorUiStore'
 import { validateProject } from '../../engine/validation'
 import { SlideBackgroundPicker } from './SlideBackgroundPicker'
 import { SlideCharacterPicker } from './SlideCharacterPicker'
@@ -8,26 +9,42 @@ import { ChoiceEditor } from './ChoiceEditor'
 export function InspectorPanel() {
   const slide = useSelectedSlide()
   const project = useProjectStore((s) => s.project)
+  const isOpen = useEditorUiStore((s) => s.isInspectorPanelOpen)
+  const closeInspectorPanel = useEditorUiStore((s) => s.closeInspectorPanel)
 
-  if (!slide) {
-    return <div className="w-80 shrink-0 border-l border-slate-200 bg-white p-4 text-sm text-slate-400">Keine Folie ausgewählt.</div>
-  }
-
-  const issues = validateProject(project).filter((issue) => issue.slideId === slide.id)
+  const issues = slide ? validateProject(project).filter((issue) => issue.slideId === slide.id) : []
 
   return (
-    <div className="w-80 shrink-0 space-y-5 overflow-y-auto border-l border-slate-200 bg-white p-4">
-      {issues.length > 0 && (
-        <div className="space-y-1 rounded-md border border-red-200 bg-red-50 p-2 text-xs text-red-700">
-          {issues.map((issue, i) => (
-            <p key={i}>⚠ {issue.message}</p>
-          ))}
-        </div>
-      )}
-      <SlideBackgroundPicker slide={slide} />
-      <SlideCharacterPicker slide={slide} />
-      <DialogueEditor slide={slide} />
-      <ChoiceEditor slide={slide} />
+    <div
+      className={`fixed inset-y-0 right-0 z-30 flex w-80 shrink-0 flex-col overflow-y-auto border-l border-slate-200 bg-white transition-transform duration-200 md:static md:z-auto md:translate-x-0 ${
+        isOpen ? 'translate-x-0' : 'translate-x-full'
+      }`}
+    >
+      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-2 md:hidden">
+        <h2 className="text-sm font-semibold text-slate-700">Bearbeiten</h2>
+        <button onClick={closeInspectorPanel} className="text-slate-400 hover:text-slate-700" title="Schließen">
+          ✕
+        </button>
+      </div>
+      <div className="space-y-5 p-4">
+        {!slide ? (
+          <p className="text-sm text-slate-400">Keine Folie ausgewählt.</p>
+        ) : (
+          <>
+            {issues.length > 0 && (
+              <div className="space-y-1 rounded-md border border-red-200 bg-red-50 p-2 text-xs text-red-700">
+                {issues.map((issue, i) => (
+                  <p key={i}>⚠ {issue.message}</p>
+                ))}
+              </div>
+            )}
+            <SlideBackgroundPicker slide={slide} />
+            <SlideCharacterPicker slide={slide} />
+            <DialogueEditor slide={slide} />
+            <ChoiceEditor slide={slide} />
+          </>
+        )}
+      </div>
     </div>
   )
 }
