@@ -26,7 +26,7 @@ export function SlideList() {
 
   return (
     <div
-      className={`fixed inset-y-0 left-0 z-30 flex h-full w-72 shrink-0 flex-col border-r border-slate-200 bg-slate-50 transition-transform duration-200 md:static md:z-auto md:translate-x-0 ${
+      className={`fixed inset-y-0 left-0 z-30 flex h-full w-72 shrink-0 flex-col border-r border-slate-200 bg-slate-50 transition-transform duration-200 lg:static lg:z-auto lg:translate-x-0 ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}
     >
@@ -36,7 +36,7 @@ export function SlideList() {
           <Button variant="primary" onClick={() => addSlide(selectedSlideId)}>
             + Folie
           </Button>
-          <button onClick={closeSlidesPanel} className="text-slate-400 hover:text-slate-700 md:hidden" title="Schließen">
+          <button onClick={closeSlidesPanel} className="text-slate-400 hover:text-slate-700 lg:hidden" title="Schließen">
             ✕
           </button>
         </div>

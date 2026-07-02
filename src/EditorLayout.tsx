@@ -48,12 +48,12 @@ export function EditorLayout() {
 
   return (
     <div className="flex h-screen flex-col">
-      <header className="flex shrink-0 flex-col gap-2 border-b border-slate-200 bg-white px-4 py-2 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-2 md:gap-4">
+      <header className="flex shrink-0 flex-col gap-2 border-b border-slate-200 bg-white px-4 py-2 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-center gap-2 lg:gap-4">
           {activeTab === 'slides' && (
             <button
               onClick={openSlidesPanel}
-              className="shrink-0 rounded p-1.5 text-lg leading-none text-slate-500 hover:bg-slate-100 md:hidden"
+              className="shrink-0 rounded p-1.5 text-lg leading-none text-slate-500 hover:bg-slate-100 lg:hidden"
               title="Folien anzeigen"
             >
               ☰
@@ -78,14 +78,14 @@ export function EditorLayout() {
           {activeTab === 'slides' && (
             <button
               onClick={openInspectorPanel}
-              className="ml-auto shrink-0 rounded p-1.5 text-lg leading-none text-slate-500 hover:bg-slate-100 md:hidden"
+              className="ml-auto shrink-0 rounded p-1.5 text-lg leading-none text-slate-500 hover:bg-slate-100 lg:hidden"
               title="Bearbeiten anzeigen"
             >
               ✏️
             </button>
           )}
         </div>
-        <div className="flex gap-2 overflow-x-auto pb-1 md:pb-0">
+        <div className="flex gap-2 overflow-x-auto pb-1 lg:pb-0">
           <Button variant="ghost" className="shrink-0" onClick={newProject}>
             Neu
           </Button>
@@ -141,7 +141,7 @@ export function EditorLayout() {
                   closeSlidesPanel()
                   closeInspectorPanel()
                 }}
-                className="fixed inset-0 z-20 bg-black/30 md:hidden"
+                className="fixed inset-0 z-20 bg-black/30 lg:hidden"
               />
             )}
             <SlideList />

@@ -16,11 +16,11 @@ export function InspectorPanel() {
 
   return (
     <div
-      className={`fixed inset-y-0 right-0 z-30 flex w-80 shrink-0 flex-col overflow-y-auto border-l border-slate-200 bg-white transition-transform duration-200 md:static md:z-auto md:translate-x-0 ${
+      className={`fixed inset-y-0 right-0 z-30 flex w-80 shrink-0 flex-col overflow-y-auto border-l border-slate-200 bg-white transition-transform duration-200 lg:static lg:z-auto lg:translate-x-0 ${
         isOpen ? 'translate-x-0' : 'translate-x-full'
       }`}
     >
-      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-2 md:hidden">
+      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-2 lg:hidden">
         <h2 className="text-sm font-semibold text-slate-700">Bearbeiten</h2>
         <button onClick={closeInspectorPanel} className="text-slate-400 hover:text-slate-700" title="Schließen">
           ✕
