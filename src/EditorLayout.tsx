@@ -161,6 +161,7 @@ export function EditorLayout() {
         )}
       </main>
 
+      <footer className="shrink-0 border-t border-slate-200 bg-white px-4 py-2 text-center text-xs text-slate-500">© B. Bruns</footer>
       {isPlaytestOpen && <PlaytestOverlay />}
     </div>
   )
